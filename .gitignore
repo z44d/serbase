@@ -1,0 +1,11 @@
+node_modules
+dist
+out
+*.tgz
+coverage
+*.lcov
+.env
+.env.*
+*.tsbuildinfo
+.DS_Store
+src-tauri/target
