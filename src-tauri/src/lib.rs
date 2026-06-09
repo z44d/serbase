@@ -86,6 +86,7 @@ pub fn run() {
             commands::wipe_database,
             commands::get_db_status,
             commands::execute_query,
+            commands::read_logo,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

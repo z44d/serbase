@@ -3,6 +3,20 @@ use crate::{EngineMap, LogPayload, DbStatusPayload, LogCallback};
 use std::sync::Arc;
 use tauri::{AppHandle, Emitter, State};
 
+const MONGO_SVG: &str = include_str!("../resources/mongodb.svg");
+const REDIS_SVG: &str = include_str!("../resources/redis.svg");
+const POSTGRES_SVG: &str = include_str!("../resources/postgresql.svg");
+
+#[tauri::command]
+pub fn read_logo(name: String) -> Result<String, String> {
+    match name.as_str() {
+        "mongodb" => Ok(MONGO_SVG.to_string()),
+        "redis" => Ok(REDIS_SVG.to_string()),
+        "postgresql" => Ok(POSTGRES_SVG.to_string()),
+        _ => Err(format!("Unknown logo: {}", name)),
+    }
+}
+
 #[tauri::command]
 pub async fn create_database(
     server_id: String,

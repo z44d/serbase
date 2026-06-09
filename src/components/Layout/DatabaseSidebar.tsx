@@ -17,8 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { convertFileSrc } from '@tauri-apps/api/core';
-import { resolveResource } from '@tauri-apps/api/path';
+import { invoke } from '@tauri-apps/api/core';
 import { useDatabaseStore } from '../../store/database-store';
 import { StatusBadge } from '../Common/StatusBadge';
 import type { DBType } from '../../database/types';
@@ -33,8 +32,8 @@ function DbLogo({ type, ...imgProps }: { type: DBType } & React.ImgHTMLAttribute
   const [src, setSrc] = useState('');
 
   useEffect(() => {
-    resolveResource(`resources/${logoFiles[type]}.svg`).then((path) => {
-      setSrc(convertFileSrc(path));
+    invoke<string>('read_logo', { name: logoFiles[type] }).then((svg) => {
+      setSrc(`data:image/svg+xml,${encodeURIComponent(svg)}`);
     });
   }, [type]);
 
