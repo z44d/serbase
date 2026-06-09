@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -18,18 +17,30 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import StorageIcon from '@mui/icons-material/Storage';
-import MemoryIcon from '@mui/icons-material/Memory';
-import HubIcon from '@mui/icons-material/Hub';
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { resolveResource } from '@tauri-apps/api/path';
 import { useDatabaseStore } from '../../store/database-store';
 import { StatusBadge } from '../Common/StatusBadge';
 import type { DBType } from '../../database/types';
 
-const iconMap: Record<DBType, typeof StorageIcon> = {
-  postgres: StorageIcon,
-  redis: MemoryIcon,
-  mongo: HubIcon,
+const logoFiles: Record<DBType, string> = {
+  postgres: 'postgresql',
+  redis: 'redis',
+  mongo: 'mongodb',
 };
+
+function DbLogo({ type, ...imgProps }: { type: DBType } & React.ImgHTMLAttributes<HTMLImageElement>) {
+  const [src, setSrc] = useState('');
+
+  useEffect(() => {
+    resolveResource(`resources/${logoFiles[type]}.svg`).then((path) => {
+      setSrc(convertFileSrc(path));
+    });
+  }, [type]);
+
+  if (!src) return <Box sx={{ width: 20, height: 20 }} />;
+  return <img src={src} {...imgProps} />;
+}
 
 export function DatabaseSidebar() {
   const instances = useDatabaseStore((s) => s.instances);
@@ -103,7 +114,6 @@ export function DatabaseSidebar() {
           </Box>
         )}
         {instanceList.map((instance) => {
-          const Icon = iconMap[instance.type];
           const isActive = instance.id === activeInstanceId;
 
           return (
@@ -144,8 +154,8 @@ export function DatabaseSidebar() {
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
-                  <ListItemIcon sx={{ minWidth: 32, color: isActive ? 'primary.main' : 'text.secondary' }}>
-                    <Icon sx={{ fontSize: 20 }} />
+                  <ListItemIcon sx={{ minWidth: 32 }}>
+                    <DbLogo type={instance.type} width={20} height={20} />
                   </ListItemIcon>
                   <ListItemText
                     primary={instance.name || instance.label}
