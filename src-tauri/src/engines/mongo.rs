@@ -128,7 +128,7 @@ impl MongoEngine {
                                     let mut msg = Vec::with_capacity(total_len);
                                     msg.extend_from_slice(&(total_len as u32).to_le_bytes());
                                     msg.extend_from_slice(&[0,0,0,0]);
-                                    msg.extend_from_slice(&[0,0,0,0]);
+                                    msg.extend_from_slice(&_request_id.to_le_bytes());
                                     msg.extend_from_slice(&(2013u32).to_le_bytes());
                                     msg.extend_from_slice(&[0,0,0,0]);
                                     msg.push(0u8);
@@ -263,7 +263,7 @@ impl MongoEngine {
                                             let mut msg = Vec::with_capacity(total_len);
                                             msg.extend_from_slice(&(total_len as u32).to_le_bytes());
                                             msg.extend_from_slice(&[0,0,0,0]);
-                                            msg.extend_from_slice(&[0,0,0,0]);
+                                            msg.extend_from_slice(&_inner_request_id.to_le_bytes());
                                             msg.extend_from_slice(&(2013u32).to_le_bytes());
                                             msg.extend_from_slice(&[0,0,0,0]);
                                             msg.push(0u8);

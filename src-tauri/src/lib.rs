@@ -35,7 +35,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .manage::<EngineMap>(Arc::new(Mutex::new(HashMap::new())))
-        .setup(|app| {
+        .setup(|_app| {
             #[cfg(desktop)]
             {
                 let img = image::load_from_memory(include_bytes!("../icons/32x32.png"))
@@ -44,9 +44,9 @@ pub fn run() {
                 let (w, h) = img.dimensions();
                 let icon = tauri::image::Image::new_owned(img.into_raw(), w, h);
 
-                let show = tauri::menu::MenuItem::with_id(app, "show", "Show", true, None::<&str>)?;
-                let quit = tauri::menu::MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-                let menu = tauri::menu::Menu::with_items(app, &[&show, &quit])?;
+                let show = tauri::menu::MenuItem::with_id(_app, "show", "Open App", true, None::<&str>)?;
+                let quit = tauri::menu::MenuItem::with_id(_app, "quit", "Quit", true, None::<&str>)?;
+                let menu = tauri::menu::Menu::with_items(_app, &[&show, &quit])?;
 
                 tauri::tray::TrayIconBuilder::new()
                     .icon(icon)
@@ -66,17 +66,17 @@ pub fn run() {
                             _ => {}
                         }
                     })
-                    .build(app)?;
+                    .build(_app)?;
             }
 
             Ok(())
         })
-        .on_window_event(|window, event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
+        .on_window_event(|_window, event| {
+            if let tauri::WindowEvent::CloseRequested { api: _api, .. } = event {
                 #[cfg(target_os = "macos")]
                 {
-                    let _ = window.hide();
-                    api.prevent_close();
+                    let _ = _window.hide();
+                    _api.prevent_close();
                 }
             }
         })

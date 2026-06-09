@@ -95,6 +95,7 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
             label: makeLabel(def),
             host: def.host,
             port: def.port,
+            database: def.database,
             status: 'stopped',
             uptime: 0,
             logs: [],
@@ -120,6 +121,7 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
       label: makeLabel(serverDef),
       host: def.host,
       port: def.port,
+      database: def.database,
       status: 'stopped',
       uptime: 0,
       logs: [],
@@ -177,6 +179,7 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
         name: def.name,
         username: def.username,
         password: def.password,
+        database: def.database,
       });
       const running = { ...updated, status: 'running' as DBStatus, uptime: Date.now() };
       const runningInstances = new Map(get().instances);

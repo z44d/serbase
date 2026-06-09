@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -10,6 +10,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
@@ -30,18 +32,29 @@ export function InstanceToolbar({ instance, bottomTab, onBottomTabChange }: Prop
   const startServer = useDatabaseStore((s) => s.startServer);
   const stopServer = useDatabaseStore((s) => s.stopServer);
   const wipeServer = useDatabaseStore((s) => s.wipeServer);
-  const removeServer = useDatabaseStore((s) => s.removeServer);
+  const serverDefs = useDatabaseStore((s) => s.serverDefs);
+  const def = serverDefs.get(instance.id);
 
   const [configOpen, setConfigOpen] = useState(false);
   const [configHost, setConfigHost] = useState(instance.host);
   const [configPort, setConfigPort] = useState(String(instance.port));
+  const [urlCopied, setUrlCopied] = useState(false);
 
   const isRunning = instance.status === 'running';
 
   const handleSaveConfig = () => {
-    // TODO: persist config changes to serverDefs
     setConfigOpen(false);
   };
+
+  const db = instance.database || def?.username || 'postgres';
+  const connUrl = `postgresql://${def?.username || 'postgres'}${def?.password ? `:${def.password}` : ''}@${instance.host}:${instance.port}/${db}`;
+
+  const handleCopyUrl = useCallback(() => {
+    navigator.clipboard.writeText(connUrl).then(() => {
+      setUrlCopied(true);
+      setTimeout(() => setUrlCopied(false), 2000);
+    });
+  }, [connUrl]);
 
   return (
     <Box
@@ -68,6 +81,22 @@ export function InstanceToolbar({ instance, bottomTab, onBottomTabChange }: Prop
         >
           {instance.host}:{instance.port}
         </Typography>
+        {isRunning && instance.type === 'postgres' && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
+            <Typography
+              variant="caption"
+              color="success.main"
+              sx={{ fontFamily: '"JetBrains Mono", monospace', fontSize: '0.65rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: { xs: 180, sm: 300 } }}
+            >
+              {connUrl}
+            </Typography>
+            <Tooltip title={urlCopied ? 'Copied!' : 'Copy connection URL'}>
+              <IconButton size="small" onClick={handleCopyUrl} sx={{ color: urlCopied ? 'success.main' : 'text.secondary', p: 0.25 }}>
+                <ContentCopyIcon sx={{ fontSize: 12 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
         {!isRunning && (
           <Tooltip title="Configure host and port">
             <Button

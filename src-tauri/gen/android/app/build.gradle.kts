@@ -24,6 +24,17 @@ android {
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
+    signingConfigs {
+        val keystorePath = System.getenv("KEYSTORE_PATH")
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+            }
+        }
+    }
     buildTypes {
         getByName("debug") {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
@@ -43,6 +54,10 @@ android {
                     .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
                     .toList().toTypedArray()
             )
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+            if (keystorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     kotlinOptions {
@@ -50,6 +65,12 @@ android {
     }
     buildFeatures {
         buildConfig = true
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("androidx.lifecycle:lifecycle-process:2.9.0")
     }
 }
 
@@ -62,7 +83,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-process:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-process:2.9.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")

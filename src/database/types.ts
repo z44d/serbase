@@ -23,6 +23,7 @@ export interface ServerDefinition {
   port: number;
   username: string;
   password: string;
+  database: string;
 }
 
 export interface InstanceState {
@@ -32,6 +33,7 @@ export interface InstanceState {
   label: string;
   host: string;
   port: number;
+  database: string;
   status: DBStatus;
   uptime: number;
   logs: LogEntry[];

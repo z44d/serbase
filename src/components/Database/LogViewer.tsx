@@ -1,8 +1,11 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import type { InstanceState, LogEntry } from '../../database/types';
 
 interface Props {
@@ -19,6 +22,7 @@ const levelColors: Record<LogEntry['level'], string> = {
 export function LogViewer({ instance }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const [showDebug, setShowDebug] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const filteredLogs = showDebug
     ? instance.logs
@@ -27,6 +31,16 @@ export function LogViewer({ instance }: Props) {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [filteredLogs.length]);
+
+  const handleCopy = useCallback(() => {
+    const text = filteredLogs
+      .map((e) => `[${e.level.toUpperCase()}] ${new Date(e.timestamp).toLocaleTimeString()} ${e.message}`)
+      .join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [filteredLogs]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -47,7 +61,12 @@ export function LogViewer({ instance }: Props) {
         <Typography variant="caption" color="text.secondary">
           ({filteredLogs.length} entries)
         </Typography>
-        <Box sx={{ ml: 'auto' }}>
+        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Tooltip title={copied ? 'Copied!' : 'Copy logs'}>
+            <IconButton size="small" onClick={handleCopy} sx={{ color: copied ? 'success.main' : 'text.secondary' }}>
+              <ContentCopyIcon sx={{ fontSize: 14 }} />
+            </IconButton>
+          </Tooltip>
           <FormControlLabel
             control={
               <Switch

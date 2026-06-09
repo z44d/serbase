@@ -45,6 +45,7 @@ export function DatabaseSidebar() {
   const [newPort, setNewPort] = useState('6379');
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newDatabase, setNewDatabase] = useState('');
 
   const defaultPorts: Record<DBType, string> = {
     postgres: '5432',
@@ -68,12 +69,14 @@ export function DatabaseSidebar() {
       port,
       username: newUsername,
       password: newPassword,
+      database: newDatabase,
     });
 
     setDialogOpen(false);
     setNewName('');
     setNewUsername('');
     setNewPassword('');
+    setNewDatabase('');
   };
 
   const instanceList = Array.from(instances.values());
@@ -201,6 +204,14 @@ export function DatabaseSidebar() {
               value={newPort}
               onChange={(e) => setNewPort(e.target.value)}
               type="number"
+            />
+            <TextField
+              label="Database (optional)"
+              size="small"
+              value={newDatabase}
+              onChange={(e) => setNewDatabase(e.target.value)}
+              placeholder={newType === 'postgres' ? 'Defaults to username' : 'serbase'}
+              disabled={newType === 'redis'}
             />
             <TextField
               label="Username (optional)"

@@ -12,6 +12,7 @@ pub async fn create_database(
     name: String,
     username: String,
     password: String,
+    database: String,
     app: AppHandle,
     engines: State<'_, EngineMap>,
 ) -> Result<DbStatusPayload, String> {
@@ -22,7 +23,7 @@ pub async fn create_database(
     let engine: Box<dyn DatabaseEngine> = match db_type.as_str() {
         "redis" => Box::new(crate::engines::redis::RedisEngine::new(pass)),
         "mongo" => Box::new(crate::engines::mongo::MongoEngine::new(pass)),
-        "postgres" => Box::new(crate::engines::postgres::PostgresEngine::new(pass)),
+        "postgres" => Box::new(crate::engines::postgres::PostgresEngine::new(pass, username.clone(), database.clone())),
         _ => return Err(format!("Unknown database type: {}", db_type)),
     };
 
