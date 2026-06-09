@@ -192,7 +192,7 @@ export function InstanceToolbar({ instance, bottomTab, onBottomTabChange }: Prop
               size="small"
               value={configHost}
               onChange={(e) => setConfigHost(e.target.value)}
-              placeholder="0.0.0.0"
+              placeholder="127.0.0.1"
               disabled={isRunning}
             />
             <TextField

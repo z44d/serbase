@@ -41,7 +41,7 @@ export function DatabaseSidebar() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newType, setNewType] = useState<DBType>('redis');
   const [newName, setNewName] = useState('');
-  const [newHost, setNewHost] = useState('0.0.0.0');
+  const [newHost, setNewHost] = useState('127.0.0.1');
   const [newPort, setNewPort] = useState('6379');
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -196,7 +196,7 @@ export function DatabaseSidebar() {
               size="small"
               value={newHost}
               onChange={(e) => setNewHost(e.target.value)}
-              placeholder="0.0.0.0"
+              placeholder="127.0.0.1"
             />
             <TextField
               label="Port"
