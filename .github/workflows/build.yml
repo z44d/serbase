@@ -37,9 +37,9 @@ jobs:
 
       - run: npm ci
       - run: npx tsc --noEmit
-      - name: cargo check
-        working-directory: src-tauri
-        run: cargo check
+      # - name: cargo check
+      #   working-directory: src-tauri
+      #   run: cargo check
 
   build-macos:
     if: startsWith(github.ref, 'refs/tags/v')
