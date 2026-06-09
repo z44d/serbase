@@ -161,20 +161,13 @@ jobs:
       - name: Generate icons from source
         run: npx tauri icon src-tauri/icon.png
 
-      - name: Generate keystore for APK signing
+      - name: setup Android signing
         run: |
-          keytool -genkeypair \
-            -alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
-            -keyalg RSA \
-            -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" \
-            -keystore "${{ runner.temp }}/keystore.jks" \
-            -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
-            -dname "CN=Serbase,O=Serbase,C=US" \
-            -validity 3650
-          echo "KEYSTORE_PATH=${{ runner.temp }}/keystore.jks" >> $GITHUB_ENV
-          echo "KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-          echo "KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
 
       - name: Build APK
         run: npx tauri android build --target=aarch64
