@@ -165,6 +165,7 @@ jobs:
         run: |
           keytool -genkeypair \
             -alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
+            -keyalg RSA \
             -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" \
             -keystore "${{ runner.temp }}/keystore.jks" \
             -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
