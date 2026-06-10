@@ -218,8 +218,7 @@ impl RedisEngine {
             "MULTI" | "EXEC" | "DISCARD" | "WATCH" | "UNWATCH" => Self::encode_simple_string("OK"),
             "HELLO" => {
                 let proto = args.first().and_then(|s| s.parse::<i32>().ok()).unwrap_or(2);
-                let info = serde_json::json!({"server":"redis","version":"7.2.0","proto":proto,"id":1,"mode":"standalone","role":"master","modules":[]});
-                Self::encode_bulk_string(Some(&info.to_string()))
+                Self::encode_hello_response(proto)
             }
             "INFO" => {
                 let info = "# Server\r\nredis_version:7.2.0\r\ntcp_port:6379\r\n\r\n# Keyspace\r\ndb0:keys=0,expires=0".to_string();
@@ -659,6 +658,32 @@ impl RedisEngine {
         let mut result = header.into_bytes();
         for item in items { result.extend_from_slice(item); }
         result
+    }
+    fn encode_hello_response(proto: i32) -> Vec<u8> {
+        let entries: [(&str, Vec<u8>); 7] = [
+            ("server", Self::encode_bulk_string(Some("redis"))),
+            ("version", Self::encode_bulk_string(Some("7.2.0"))),
+            ("proto", Self::encode_integer(proto as i64)),
+            ("id", Self::encode_integer(1)),
+            ("mode", Self::encode_bulk_string(Some("standalone"))),
+            ("role", Self::encode_bulk_string(Some("master"))),
+            ("modules", Self::encode_array(&[])),
+        ];
+        if proto >= 3 {
+            let mut result = format!("%{}\r\n", entries.len()).into_bytes();
+            for (key, val) in &entries {
+                result.extend_from_slice(&Self::encode_bulk_string(Some(key)));
+                result.extend_from_slice(val);
+            }
+            result
+        } else {
+            let mut items = Vec::with_capacity(entries.len() * 2);
+            for (key, val) in &entries {
+                items.push(Self::encode_bulk_string(Some(key)));
+                items.push(val.clone());
+            }
+            Self::encode_array(&items)
+        }
     }
 
     fn resp_to_query_result(resp: &[u8], command: &str) -> String {

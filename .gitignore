@@ -9,3 +9,5 @@ coverage
 *.tsbuildinfo
 .DS_Store
 src-tauri/target
+venv/
+*.py
