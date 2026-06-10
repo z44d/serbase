@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Drawer from '@mui/material/Drawer';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import Link from '@mui/material/Link';
-import MenuIcon from '@mui/icons-material/Menu';
-import StorageIcon from '@mui/icons-material/Storage';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { useMediaQuery, useTheme } from '@mui/material';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import MenuIcon from "@mui/icons-material/Menu";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import StorageIcon from "@mui/icons-material/Storage";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useMediaQuery, useTheme } from "@mui/material";
+import { useState } from "react";
+import type { ReactNode } from "react";
 
 interface Props {
   sidebar: ReactNode;
@@ -39,10 +39,10 @@ export function AppLayout({ sidebar, main }: Props) {
             <StorageIcon sx={{ color: 'primary.main' }} />
           </IconButton>
           <Typography variant="h6" fontWeight={700} letterSpacing="-0.02em" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
-            serbase
+            SerBase
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary', ml: 0.5, display: { xs: 'none', sm: 'block' } }}>
-            v0.1.0
+            v0.1.1
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Toolbar>
@@ -76,11 +76,11 @@ export function AppLayout({ sidebar, main }: Props) {
       <Dialog open={aboutOpen} onClose={() => setAboutOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <StorageIcon sx={{ color: 'primary.main' }} />
-          <span>serbase</span>
+          <span>SerBase</span>
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Local database manager. v0.1.0
+            Local database manager. v0.1.1
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Link href="https://github.com/z44d/serbase" target="_blank" rel="noopener" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

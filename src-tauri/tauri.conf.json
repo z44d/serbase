@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicedoc/tauri/v2/tooling/cli/schema.json",
-  "productName": "serbase",
-  "version": "0.1.0",
+  "productName": "SerBase",
+  "version": "0.1.1",
   "identifier": "com.z44d.serbase",
   "build": {
     "frontendDist": "../dist",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "serbase",
+        "title": "SerBase",
         "width": 1280,
         "height": 800,
         "minWidth": 900,
