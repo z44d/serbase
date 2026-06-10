@@ -4,7 +4,7 @@ mod engines;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::Mutex;
-// use tauri::Manager;
+use tauri::Manager;
 
 use engines::{DatabaseEngine, LogCallback};
 
