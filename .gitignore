@@ -11,4 +11,3 @@ coverage
 src-tauri/target
 venv/
 *.py
-icons/
