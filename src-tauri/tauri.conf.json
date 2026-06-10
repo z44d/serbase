@@ -22,11 +22,12 @@
         "fullscreen": false,
         "decorations": true,
         "closable": true,
-        "hiddenTitle": false
+        "hiddenTitle": false,
+        "devtools": true
       }
     ],
     "security": {
-      "csp": "default-src 'self' 'unsafe-eval' blob: data:; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self' ipc: localhost:1420 ws://localhost:1421; img-src 'self' data: blob:"
+      "csp": null
     }
   },
   "bundle": {
