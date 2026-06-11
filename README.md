@@ -97,6 +97,127 @@ src-tauri/                    # Backend (Rust)
 └── tauri.conf.json
 ```
 
+## Testing connections with Python
+
+After starting a server in Serbase, you can test the connection from Python using the provided test scripts. Install the required driver and run the appropriate script:
+
+### Redis
+
+```sh
+pip install redis
+```
+
+```python
+import redis
+
+def test_redis_connection():
+    try:
+        # Connect to the local Redis server (default port is 6379)
+        # decode_responses=True converts responses from bytes to strings
+        r = redis.Redis(
+            host='localhost', 
+            port=6379, 
+            db=0, 
+            decode_responses=True,
+            socket_connect_timeout=2  # Fails fast if the server is down
+        )
+        
+        # Send a ping to the server
+        if r.ping():
+            print("Successfully connected to Redis!")
+            
+            # Optional: Perform a quick write/read test
+            r.set("test_key", "Hello from Python!")
+            print(f"Verified test data: {r.get('test_key')}")
+            
+    except redis.ConnectionError as e:
+        print(f"Could not connect to Redis: {e}")
+
+if __name__ == "__main__":
+    test_redis_connection()
+```
+
+### MongoDB
+
+```sh
+pip install pymongo
+```
+
+```python
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
+
+# Replace with your actual local or MongoDB Atlas connection string
+MONGO_URI = "mongodb://localhost:27017/"
+
+# Optional timeouts: Fail fast instead of waiting the default 30 seconds
+client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=3000)
+
+try:
+    # The ping command is cheap and does not require special auth privileges
+    client.admin.command('ping')
+    print("MongoDB connection successful!")
+    
+    # Optional: List available databases to verify read permissions
+    print("Databases:", client.list_database_names())
+
+except ServerSelectionTimeoutError:
+    print("Connection failed: Server selection timed out.")
+except ConnectionFailure:
+    print("Connection failed: Server is unavailable or network error.")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+finally:
+    # Always close the connection pool when finished testing
+    client.close()
+```
+
+### PostgreSQL
+
+```sh
+pip install psycopg2-binary
+```
+
+```python
+import psycopg2
+
+
+def test_connection():
+    try:
+        # Establish connection with database credentials
+        connection = psycopg2.connect(
+            dbname="your_db_name",
+            user="your_username",
+            password="your_password",
+            host="localhost",  # Use IP or host string if remote
+            port="5432",
+        )
+
+        # Create a cursor object to execute queries
+        cursor = connection.cursor()
+
+        # Run a simple test query
+        cursor.execute("SELECT version();")
+
+        # Fetch and print the server version
+        db_version = cursor.fetchone()
+        print("Success! Connected to PostgreSQL.")
+        print(f"Database version: {db_version[0]}")
+
+        # Clean up database resources
+        cursor.close()
+        connection.close()
+
+    except Exception as error:
+        print(f"Connection failed: {error}")
+
+
+if __name__ == "__main__":
+    test_connection()
+```
+
+> **Note:** Edit the host, port, and credentials in each script to match your server configuration in Serbase. The connection URL is shown in the toolbar when a server is running — use the copy button to grab it.
+
 ## Build & Release
 
 Tag a commit with `v*` to trigger the CI pipeline (`.github/workflows/build.yml`):

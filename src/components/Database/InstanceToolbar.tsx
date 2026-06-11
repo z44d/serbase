@@ -46,8 +46,28 @@ export function InstanceToolbar({ instance, bottomTab, onBottomTabChange }: Prop
     setConfigOpen(false);
   };
 
-  const db = instance.database || def?.username || 'postgres';
-  const connUrl = `postgresql://${def?.username || 'postgres'}${def?.password ? `:${def.password}` : ''}@${instance.host}:${instance.port}/${db}`;
+  function getConnUrl(): string {
+    switch (instance.type) {
+      case 'postgres': {
+        const db = instance.database || def?.username || 'postgres';
+        return `postgresql://${def?.username || 'postgres'}${def?.password ? `:${def.password}` : ''}@${instance.host}:${instance.port}/${db}`;
+      }
+      case 'mongo': {
+        const auth = def?.username ? `${def.username}${def?.password ? `:${def.password}` : ''}@` : '';
+        const db = instance.database || '';
+        return `mongodb://${auth}${instance.host}:${instance.port}/${db}`;
+      }
+      case 'redis': {
+        const auth = def?.password ? `:${def.password}@` : '';
+        const db = instance.database || '';
+        return `redis://${auth}${instance.host}:${instance.port}/${db}`;
+      }
+      default:
+        return '';
+    }
+  }
+
+  const connUrl = getConnUrl();
 
   const handleCopyUrl = useCallback(() => {
     navigator.clipboard.writeText(connUrl).then(() => {
@@ -81,7 +101,7 @@ export function InstanceToolbar({ instance, bottomTab, onBottomTabChange }: Prop
         >
           {instance.host}:{instance.port}
         </Typography>
-        {isRunning && instance.type === 'postgres' && (
+        {isRunning && connUrl && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
             <Typography
               variant="caption"

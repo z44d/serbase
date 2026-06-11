@@ -41,6 +41,13 @@ export const darkTheme = createTheme({
         body: {
           scrollbarWidth: 'thin',
           scrollbarColor: '#1e3a5f #0a1929',
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+        '#root': {
+          height: '100%',
         },
       },
     },
