@@ -16,8 +16,8 @@
         "title": "SerBase",
         "width": 1280,
         "height": 800,
-        "minWidth": 900,
-        "minHeight": 600,
+        "minWidth": 400,
+        "minHeight": 300,
         "resizable": true,
         "fullscreen": false,
         "decorations": true,
@@ -41,6 +41,11 @@
     "resources": ["resources/*"],
     "macOS": {
       "minimumSystemVersion": "12.0"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
     },
     "android": {
       "minSdkVersion": 29

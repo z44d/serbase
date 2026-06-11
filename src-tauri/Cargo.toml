@@ -23,6 +23,7 @@ bson = { version = "2", features = ["chrono-0_4"] }
 chrono = "0.4"
 image = "0.25"
 tauri-plugin-store = "2.4.3"
+tauri-plugin-opener = "2"
 
 [profile.release]
 strip = true

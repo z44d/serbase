@@ -63,6 +63,7 @@ export const darkTheme = createTheme({
         paper: {
           borderRight: '1px solid rgba(255,255,255,0.08)',
           backgroundColor: '#0d2137',
+          paddingTop: 'env(safe-area-inset-top)',
         },
       },
     },

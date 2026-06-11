@@ -5,9 +5,32 @@ import { Store } from '@tauri-apps/plugin-store';
 import type { DBType, DBStatus, LogEntry, InstanceState, ServerDefinition } from '../database/types';
 
 const STORE_PATH = 'serbase-servers.json';
+const LS_KEY = 'serbase-serverDefs';
 
 async function getStore(): Promise<Store> {
   return await Store.load(STORE_PATH);
+}
+
+function saveToLocal(defs: Map<string, ServerDefinition>): void {
+  try {
+    const obj: Record<string, ServerDefinition> = {};
+    for (const [id, def] of defs) {
+      obj[id] = def;
+    }
+    localStorage.setItem(LS_KEY, JSON.stringify(obj));
+  } catch (e) {
+    console.warn('Failed to save to localStorage:', e);
+  }
+}
+
+function loadFromLocal(): Record<string, ServerDefinition> | null {
+  try {
+    const data = localStorage.getItem(LS_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch (e) {
+    console.warn('Failed to load from localStorage:', e);
+    return null;
+  }
 }
 
 let serverIdCounter = 0;
@@ -50,6 +73,7 @@ function defsToObject(defs: Map<string, ServerDefinition>): Record<string, Serve
 }
 
 async function persistDefs(defs: Map<string, ServerDefinition>): Promise<void> {
+  saveToLocal(defs);
   try {
     const store = await getStore();
     await store.set('serverDefs', defsToObject(defs));
@@ -82,7 +106,7 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
       });
 
       const store = await getStore();
-      const savedDefs = await store.get<Record<string, ServerDefinition>>('serverDefs');
+      const savedDefs = await store.get<Record<string, ServerDefinition>>('serverDefs') || loadFromLocal();
       if (savedDefs) {
         const defs = new Map<string, ServerDefinition>();
         const instances = new Map<string, InstanceState>();

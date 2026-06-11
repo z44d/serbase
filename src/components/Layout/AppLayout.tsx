@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { openUrl } from '@tauri-apps/plugin-opener';
 import StorageIcon from "@mui/icons-material/Storage";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -83,10 +84,20 @@ export function AppLayout({ sidebar, main }: Props) {
             Local database manager. v0.1.1
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Link href="https://github.com/z44d/serbase" target="_blank" rel="noopener" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Link
+              component="button"
+              onClick={() => openUrl('https://github.com/z44d/serbase')}
+              underline="hover"
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', textAlign: 'left', background: 'none', border: 'none', color: 'primary.main', fontSize: 'inherit', p: 0, fontFamily: 'inherit' }}
+            >
               <OpenInNewIcon sx={{ fontSize: 16 }} /> GitHub
             </Link>
-            <Link href="https://t.me/zaidlab" target="_blank" rel="noopener" underline="hover" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Link
+              component="button"
+              onClick={() => openUrl('https://t.me/zaidlab')}
+              underline="hover"
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', textAlign: 'left', background: 'none', border: 'none', color: 'primary.main', fontSize: 'inherit', p: 0, fontFamily: 'inherit' }}
+            >
               <OpenInNewIcon sx={{ fontSize: 16 }} /> Telegram
             </Link>
           </Box>
