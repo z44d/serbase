@@ -60,11 +60,7 @@ pub async fn create_database(
 
     engine.start(host.clone(), port, on_log, on_debug).await?;
 
-    let was_empty = map.is_empty();
     map.insert(server_id.clone(), engine);
-    if was_empty {
-        crate::android_foreground::set_servers_active(true);
-    }
 
     let payload = DbStatusPayload { db_type: server_id.clone(), running: true, port, host, name, username };
     let _ = app.emit("db:status", &payload);
@@ -81,9 +77,6 @@ pub async fn stop_database(
     let mut map = engines.lock().await;
     if let Some(engine) = map.remove(&server_id) {
         engine.stop().await?;
-    }
-    if map.is_empty() {
-        crate::android_foreground::set_servers_active(false);
     }
     let _ = app.emit("db:status", &DbStatusPayload { db_type: server_id, running: false, port: 0, host: String::new(), name: String::new(), username: String::new() });
     Ok(())

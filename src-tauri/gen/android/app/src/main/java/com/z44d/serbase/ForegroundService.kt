@@ -23,12 +23,13 @@ class ForegroundService : Service() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("SerBase")
             .setContentText("Database servers are running")
-            .setSmallIcon(R.mipmap.ic_launcher_foreground)
+            .setSmallIcon(android.R.drawable.ic_menu_manage)
             .setOngoing(true)
+            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
         try {
             startForeground(NOTIFICATION_ID, notification)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             stopSelf()
         }
         return START_STICKY
@@ -40,10 +41,10 @@ class ForegroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Server Status",
+                "SerBase Background Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows when SerBase database servers are running in the background"
+                description = "Keeps SerBase alive so database servers continue running in the background"
             }
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)

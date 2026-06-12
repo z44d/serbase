@@ -1,4 +1,3 @@
-mod android_foreground;
 mod commands;
 mod engines;
 
@@ -38,13 +37,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage::<EngineMap>(Arc::new(Mutex::new(HashMap::new())))
         .setup(|app| {
-            #[cfg(target_os = "android")]
-            {
-                if let Ok(dir) = app.path().app_data_dir() {
-                    android_foreground::init(dir);
-                }
-            }
-
             #[cfg(desktop)]
             {
                 let img = image::load_from_memory(include_bytes!("../icons/32x32.png"))

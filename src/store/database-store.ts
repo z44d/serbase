@@ -137,6 +137,20 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
           });
         }
         set({ serverDefs: defs, instances });
+
+        try {
+          const statuses = await invoke<Array<{ db_type: string; running: boolean; port: number; host: string }>>('get_db_status');
+          const running = new Map(get().instances);
+          for (const s of statuses) {
+            const inst = running.get(s.db_type);
+            if (inst && s.running) {
+              running.set(s.db_type, { ...inst, status: 'running', uptime: Date.now(), port: s.port || inst.port, host: s.host || inst.host });
+            }
+          }
+          set({ instances: running });
+        } catch (e) {
+          console.warn('Failed to check running servers:', e);
+        }
       }
     } catch (e) {
       console.warn('Failed to set up event listeners or load configs:', e);
