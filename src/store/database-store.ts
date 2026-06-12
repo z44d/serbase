@@ -105,8 +105,17 @@ export const useDatabaseStore = create<DatabaseStore>((set, get) => ({
         updateInstanceStatus(db_type, running, port, host);
       });
 
-      const store = await getStore();
-      const savedDefs = await store.get<Record<string, ServerDefinition>>('serverDefs') || loadFromLocal();
+      let savedDefs = loadFromLocal();
+      try {
+        const store = await getStore();
+        const storeDefs = await store.get<Record<string, ServerDefinition>>('serverDefs');
+        if (storeDefs) {
+          savedDefs ??= {};
+          Object.assign(savedDefs, storeDefs);
+        }
+      } catch (e) {
+        console.warn('Failed to load from store plugin:', e);
+      }
       if (savedDefs) {
         const defs = new Map<string, ServerDefinition>();
         const instances = new Map<string, InstanceState>();

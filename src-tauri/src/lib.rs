@@ -82,7 +82,7 @@ pub fn run() {
         })
         .on_window_event(|_window, event| {
             if let tauri::WindowEvent::CloseRequested { api: _api, .. } = event {
-                #[cfg(target_os = "macos")]
+                #[cfg(desktop)]
                 {
                     let _ = _window.hide();
                     _api.prevent_close();

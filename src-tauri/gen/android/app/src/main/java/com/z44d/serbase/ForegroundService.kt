@@ -1,6 +1,5 @@
 package com.z44d.serbase
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
@@ -23,11 +22,15 @@ class ForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("SerBase")
-            .setContentText("SerBase is running")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentText("Database servers are running")
+            .setSmallIcon(R.mipmap.ic_launcher_foreground)
             .setOngoing(true)
             .build()
-        startForeground(NOTIFICATION_ID, notification)
+        try {
+            startForeground(NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+            stopSelf()
+        }
         return START_STICKY
     }
 
@@ -40,7 +43,7 @@ class ForegroundService : Service() {
                 "Server Status",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Shows when SerBase servers are running"
+                description = "Shows when SerBase database servers are running in the background"
             }
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
